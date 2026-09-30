@@ -90,7 +90,7 @@ def login_page():
                 st.rerun()
             else:
                 st.error("Invalid ID or Password")
-        st.caption("admin / Owner@ceo, designer / Crane@2025, vinays / Vinay@2026, vikasm / Vikasm@2026")
+        # st.caption("admin / Owner@ceo, designer /Crane@2025, vinays / Vinay@2026, vikasm / Vikasm@2026")
 
 if not st.session_state.logged_in:
     login_page()
@@ -98,17 +98,17 @@ if not st.session_state.logged_in:
 
 st.sidebar.success(f"Logged in: {st.session_state.user}")
 st.sidebar.title("DGCRANE_NEW")
-if st.sidebar.button("Logout (Keep Cache) ⚡", use_container_width=True):
+if st.sidebar.button("Logout (Keep Cache) ⚡", key="logout_keep_unique", use_container_width=True):
     st.session_state.logged_in=False
     st.rerun()
-if st.sidebar.button("Logout + Clear Cache", use_container_width=True):
+if st.sidebar.button("Logout + Clear Cache", key="logout_clear_unique",use_container_width=True):
     st.session_state.logged_in=False
     st.cache_data.clear()
     st.rerun()
 
 # ===== MAIN - EXACT COPY OF YOUR dgcrane_new.py LOGIC =====
-st.title("🏗️ DGCRANE_NEW - EOT FULL SUITE (Full Accuracy)")
-st.caption("From dgcrane_new.py - No dummy, values from respective.py files")
+st.title("🏗️ DGCRANE_NEW - DGEOT FULL SUITE")
+st.caption("BY: GAJANAN MAHALE")
 
 # Inputs - same as your input() prompts
 c1,c2,c3,c4=st.columns(4)
@@ -123,14 +123,14 @@ with c2:
     reeving=2
 with c3:
     auto=get_rail_by_swl(swl)
-    st.write(f"**Auto rail for SWL {swl}T = {auto['rail']}**")
+    # st.write(f"**Auto rail for SWL {swl}T = {auto['rail']}**")
     lt_rail_name=st.selectbox(f"Enter LT Rail size [{auto['rail']}]", ["50x50","60x40","60x60","LBS60","LBS75","LBS90","LBS105","LBS120","CR80","CR100"], index=["50x50","60x40","60x60","LBS60","LBS75","LBS90","LBS105","LBS120","CR80","CR100"].index(auto['rail']) if auto['rail'] in ["50x50","60x40","60x60","LBS60","LBS75","LBS90","LBS105","LBS120","CR80","CR100"] else 1)
     ct_rail_name=st.selectbox(f"Enter CT Rail size [{lt_rail_name}]", ["50x50","60x40","60x60","LBS60","LBS75","LBS90","LBS105","LBS120","CR80","CR100"], index=["50x50","60x40","60x60","LBS60","LBS75","LBS90","LBS105","LBS120","CR80","CR100"].index(lt_rail_name) if lt_rail_name in ["50x50","60x40","60x60","LBS60","LBS75","LBS90","LBS105","LBS120","CR80","CR100"] else 1)
 with c4:
     wt_def=round(0.2*swl,2)
     wtrolley_t=st.number_input(f"Enter W Trolley (T) [{wt_def}]", value=float(wt_def), step=0.1)
     n_ctw=st.number_input("Enter No of CT wheels [4]", value=4, min_value=2, max_value=16, step=2)
-    n_ltw=st.number_input("Enter No of LT wheels [8]", value=8, min_value=4, max_value=16, step=2)
+    n_ltw=st.number_input("Enter No of LT wheels [4]", value=4, min_value=4, max_value=16, step=2)
 
 impact,duty_f=get_factors(duty)
 st.info(f"Duty {duty} -> IMPACT={impact} DF={duty_f} (from dg_suite M8=1.5) | LT Rail STORED={lt_rail_name} will reuse for LT wheel, no re-ask | CT Rail STORED={ct_rail_name} will reuse for CT wheel & rail wt")
@@ -154,41 +154,41 @@ if st.button("Run FULL SUITE Calculation", type="primary", use_container_width=T
     st.subheader(f"Trolley Gauge - TG=Drum+1200={calc_gauge}mm = {calc_TG_cm:.0f}cm")
     TG_cm=st.number_input(f"Trolley Gauge in cm [Default Drum+1200={calc_TG_cm:.0f} cm]", value=float(calc_TG_cm), key="tg_input")
     trolley_gauge=TG_cm*10
-    st.write(f"TG = {TG_cm:.1f} cm (Drum+1200 OR User input) | Wheelbase = {TG_cm}+150 = {TG_cm+150}cm")
+    st.write(f"TG = {TG_cm:.1f} cm | Wheelbase = {TG_cm}+150 = {TG_cm+150}cm")
 
-    st.subheader(f"--- CT WHEEL (uses stored CT Rail={ct_rail_name}) ---")
-    st.write(f"Using stored CT Rail = {ct_rail_name}")
+    st.subheader(f"--- CT WHEEL ---")
+    # st.write(f"Using stored CT Rail = {ct_rail_name}")
     ct_res=get_ct_wheel(swl_t=swl, wtrolley_t=wtrolley_t, n_ctw=n_ctw, ct_rail_name=ct_rail_name, duty=duty)
     st.write(f"CT: Dmin={ct_res['dmin_mm']}mm -> Sel={ct_res['d_sel_mm']}mm Wt={ct_res['total_wt_kg']}Kg")
-    st.json(ct_res)
+    # st.json(ct_res)
 
-    st.subheader("--- DG BOX GIRDER (IMPACT FROM SUITE) ---")
+    st.subheader("--- DG BOX GIRDER ---")
     box_sol=get_box_girder(SWL_T=swl, SPAN_M=span, duty=duty, IMPACT=impact, DF=duty_f)
     if not box_sol:
         st.error("No box girder solution")
         st.stop()
     Wg=box_sol['Wg']
-    st.write(f"Box: H={box_sol['H']:.1f}cm Wg 1={Wg:.0f}Kg IMPACT={box_sol.get('IMPACT',impact)} DF={box_sol.get('DF',duty_f)} Camber={box_sol.get('camber',0)}cm")
-    st.json(box_sol)
+    st.write(f"Box: H={box_sol['H']:.1f}cm Wgirder for 1NO={Wg:.0f}Kg IMPACT={box_sol.get('IMPACT',impact)} DF={box_sol.get('DF',duty_f)} Camber={box_sol.get('camber',0)}cm")
+    # st.json(box_sol)
 
-    st.subheader("--- END CARRIAGE (Wg + TG from ct_machinery + IMPACT) ---")
-    st.write(f"Wheelbase = {TG_cm}+150 = {TG_cm+150}cm TG {TG_cm}cm")
+    st.subheader("--- END CARRIAGE ---")
+    st.write(f"Wheelbase = {TG_cm+150}cm TG {TG_cm}cm")
     P=(swl*1000 + wtrolley_t*1000)/2
     ec_sol=get_end_carriage(SWL_T=swl, SPAN_M=span, Wg=Wg, P_override=P, WT_HOIST_override=wtrolley_t*1000, TG_cm=TG_cm, duty=duty, IMPACT=impact, DF=duty_f, rope_dia=final_dia, lift_m=lift, falls=falls, drum_length_mm=drum_len)
     if not ec_sol:
         st.error("No end carriage solution")
         st.stop()
-    st.write(f"EC: H={ec_sol['H']:.1f} Wec 1={ec_sol['Wec_one']:.0f}Kg 2={ec_sol['Wec_total']:.0f}Kg Wcrane est={ec_sol['WCRANE']:.0f}Kg IMPACT={impact}")
-    st.json(ec_sol)
+    st.write(f"EC: H={ec_sol['H']:.1f} Wecfor 1NO={ec_sol['Wec_one']:.0f}Kg 2={ec_sol['Wec_total']:.0f}Kg Wcrane est={ec_sol['WCRANE']:.0f}Kg IMPACT={impact}")
+    # st.json(ec_sol)
     Wcrane_est=ec_sol['WCRANE']
 
-    st.subheader(f"--- LT WHEEL (uses stored LT Rail={lt_rail_name}) ---")
-    st.write(f"Using stored LT Rail = {lt_rail_name} (no re-ask)")
+    st.subheader(f"--- LT WHEEL ---")
+    # st.write(f"Using stored LT Rail = {lt_rail_name} (no re-ask)")
     lt_res=get_lt_wheel(swl_t=swl, wcrane_t=Wcrane_est/1000, n_ltw=n_ltw, lt_rail_name=lt_rail_name, duty=duty)
     st.write(f"LT: Dmin={lt_res['dmin_mm']} -> Sel={lt_res['d_sel_mm']}mm Wt={lt_res['total_wt_kg']}Kg")
-    st.json(lt_res)
+    # st.json(lt_res)
 
-    # FINAL WCRANE - EXACT SAME AS YOUR FILE
+    # FINAL WCRANE
     platform_wt = 65*span + 250
     ct_rail_wt_per_m = get_rail_wt(ct_rail_name)
     ct_rail_wt_total = ct_rail_wt_per_m * span * 2
@@ -199,7 +199,7 @@ if st.button("Run FULL SUITE Calculation", type="primary", use_container_width=T
         st.warning(f"LT changed: {lt_res['d_sel_mm']} -> {lt_res_final['d_sel_mm']}mm")
         lt_res=lt_res_final
         Wcrane_final = 2*Wg + ec_sol['Wec_total'] + wtrolley_t*1000 + ct_res['total_wt_kg'] + lt_res['total_wt_kg'] + 100 + platform_wt + ct_rail_wt_total
-        st.write(f"Updated Wcrane FINAL {Wcrane_final:.0f}Kg")
+        st.write(f"Wcrane TOTOL {Wcrane_final:.0f}Kg")
 
     Pmax_kg, Ha = calc_pmax(swl, span, wtrolley_t, Wcrane_final, TG_cm, n_ltw)
 
@@ -226,9 +226,9 @@ if st.button("Run FULL SUITE Calculation", type="primary", use_container_width=T
         st.success(f"Pmax Static = {Pmax_kg:.0f} kg = {Pmax_kg/1000:.3f} T")
 
     st.code(f"Wcrane = 2*Wg({2*Wg:.0f}) + Wec({ec_sol['Wec_total']:.0f}) + Wtrolley({wtrolley_t*1000:.0f}) + LTwt({lt_res['total_wt_kg']:.0f}) + CTwt({ct_res['total_wt_kg']:.0f}) +100 + Platform({platform_wt:.0f}) + CTRail({ct_rail_wt_total:.0f}) = {Wcrane_final:.0f}Kg", language="text")
-    st.write(f"**Formula: Pmax (Static wheel load without impact) = (swl+wtrolley)*(span+Ha)/((n_ltw/2)*span) + (WC_T-wtrolley)/n_ltw**")
+    # st.write(f"**Formula: Pmax (Static wheel load without impact) = (swl+wtrolley)*(span+Ha)/((n_ltw/2)*span) + (WC_T-wtrolley)/n_ltw**")
     st.write(f"**Pmax (Static wheel load without impact) = {Pmax_kg:.0f} kg = {Pmax_kg/1000:.3f} T Ha={Ha:.3f}m**")
-    import streamlit as st
+    # import streamlit as st
 
 USERS = {
     "admin": "Owner@ceo",
