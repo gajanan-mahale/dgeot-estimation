@@ -227,7 +227,8 @@ if st.button("Run FULL SUITE Calculation", type="primary", use_container_width=T
 
     st.code(f"Wcrane = 2*Wg({2*Wg:.0f}) + Wec({ec_sol['Wec_total']:.0f}) + Wtrolley({wtrolley_t*1000:.0f}) + LTwt({lt_res['total_wt_kg']:.0f}) + CTwt({ct_res['total_wt_kg']:.0f}) +100 + Platform({platform_wt:.0f}) + CTRail({ct_rail_wt_total:.0f}) = {Wcrane_final:.0f}Kg", language="text")
     st.write(f"**Formula: Pmax (Static wheel load without impact) = (swl+wtrolley)*(span+Ha)/((n_ltw/2)*span) + (WC_T-wtrolley)/n_ltw**")
-    st.write(f"**Pmax (Static wheel load without impact) = {Pmax_kg:.0f} kg = {Pmax_kg/1000:.3f} T Ha={Ha:.3f}m**")import streamlit as st
+    st.write(f"**Pmax (Static wheel load without impact) = {Pmax_kg:.0f} kg = {Pmax_kg/1000:.3f} T Ha={Ha:.3f}m**")
+    import streamlit as st
 
 USERS = {
     "admin": "Owner@ceo",
