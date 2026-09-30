@@ -101,13 +101,13 @@ st.sidebar.title("DGCRANE_NEW")
 if st.sidebar.button("Logout (Keep Cache) ⚡", key="logout_keep_unique", use_container_width=True):
     st.session_state.logged_in=False
     st.rerun()
-if st.sidebar.button("Logout + Clear Cache", key="logout_clear_unique",use_container_width=True):
-    st.session_state.logged_in=False
-    st.cache_data.clear()
-    st.rerun()
+# if st.sidebar.button("Logout + Clear Cache", key="logout_clear_unique",use_container_width=True):
+#     st.session_state.logged_in=False
+#     st.cache_data.clear()
+#     st.rerun()
 
 # ===== MAIN - EXACT COPY OF YOUR dgcrane_new.py LOGIC =====
-st.title("🏗️ DGCRANE_NEW - DGEOT FULL SUITE")
+st.title("🏗️ DGCRANE FULL SUITE")
 st.caption("BY: GAJANAN MAHALE")
 
 # Inputs - same as your input() prompts
@@ -262,7 +262,6 @@ def get_rail_by_swl_cached(swl):
 @st.cache_data(show_spinner=False)
 def cached_box_girder(SWL_T, SPAN_M, duty):
     # ... full box girder with next thickness upgrade (cached)
-    ...
 
 @st.cache_data
 def cached_pmax_static(swl, span, wtrolley_t, WC_T, TG_cm, n_ltw):
