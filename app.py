@@ -278,10 +278,10 @@ if not st.session_state.logged_in:
     # login page
     st.stop()
 
-# # LOGOUT KEEP CACHE
-# if st.sidebar.button("Logout (Keep Cache) ⚡"):
-#     st.session_state.logged_in=False
-#     st.rerun()  # cache stays
+# LOGOUT KEEP CACHE
+if st.sidebar.button("Logout (Keep Cache) ⚡"):
+    st.session_state.logged_in=False
+    st.rerun()  # cache stays
 if st.sidebar.button("Logout + Clear Cache"):
     st.session_state.logged_in=False
     st.cache_data.clear()
