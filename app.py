@@ -101,10 +101,10 @@ st.sidebar.title("DGCRANE_NEW")
 if st.sidebar.button("Logout (Keep Cache) ⚡", key="logout_keep_unique", use_container_width=True):
     st.session_state.logged_in=False
     st.rerun()
-# if st.sidebar.button("Logout + Clear Cache", key="logout_clear_unique",use_container_width=True):
-#     st.session_state.logged_in=False
-#     st.cache_data.clear()
-#     st.rerun()
+if st.sidebar.button("Logout + Clear Cache", key="logout_clear_unique",use_container_width=True):
+    st.session_state.logged_in=False
+    st.cache_data.clear()
+    st.rerun()
 
 # ===== MAIN - EXACT COPY OF YOUR dgcrane_new.py LOGIC =====
 st.title("🏗️ DGCRANE FULL SUITE")
