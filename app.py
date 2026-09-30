@@ -135,7 +135,7 @@ with c4:
 impact,duty_f=get_factors(duty)
 st.info(f"Duty {duty} -> IMPACT={impact} DF={duty_f} (from dg_suite M8=1.5) | LT Rail STORED={lt_rail_name} will reuse for LT wheel, no re-ask | CT Rail STORED={ct_rail_name} will reuse for CT wheel & rail wt")
 
-if st.button("Run FULL SUITE Calculation", type="primary", use_container_width=True):
+if st.button("Run Calculation", type="primary", use_container_width=True):
     st.subheader("--- WIRE ROPE ---")
     rope_res=select_rope(swl,falls,duty,core)
     sel=rope_res["selected"]
@@ -273,20 +273,16 @@ def cached_pmax_static(swl, span, wtrolley_t, WC_T, TG_cm, n_ltw):
 # LOGIN with CACHE
 if "logged_in" not in st.session_state:
     st.session_state.logged_in=False
-...
+    
 if not st.session_state.logged_in:
     # login page
     st.stop()
 
-# LOGOUT KEEP CACHE
-if st.sidebar.button("Logout (Keep Cache) ⚡"):
-    st.session_state.logged_in=False
-    st.rerun()  # cache stays
-if st.sidebar.button("Logout + Clear Cache"):
-    st.session_state.logged_in=False
-    st.cache_data.clear()
-    st.rerun()
-
-# FULL SUITE UI - your main file inputs
-# SWL, Span, Lift, Duty, Falls, Core, LT Rail STORED, CT Rail STORED, WT, N CT, N LT, TG, Drum Length
-# Calculate -> Box + CT wheel + EC + LT wheel + Wcrane FINAL + Pmax static
+# # LOGOUT KEEP CACHE
+# if st.sidebar.button("Logout (Keep Cache) ⚡"):
+#     st.session_state.logged_in=False
+#     st.rerun()  # cache stays
+# if st.sidebar.button("Logout + Clear Cache"):
+#     st.session_state.logged_in=False
+#     st.cache_data.clear()
+#     st.rerun()
