@@ -13,7 +13,7 @@ USERS = {
     "vikasm": "Vikasm@2026"
 }
 
-st.set_page_config(page_title="DGCRANE_NEW - Full Suite", layout="wide", page_icon="🏗️")
+st.set_page_config(page_title="DGCRANE ESTIMATION Suite", layout="wide", page_icon="🏗️")
 
 RAIL_MASTER = [
     {"swl":5,"rail":"50x50","wt":19.625},{"swl":7.5,"rail":"50x50","wt":19.625},
@@ -85,7 +85,7 @@ if st.sidebar.button("Logout", key="logout_unique", use_container_width=True):
     st.rerun()
 
 st.title("🏗️ DGCRANE_NEW - EOT FULL SUITE")
-st.caption("Login cached only - No calculation cache")
+st.caption("BY: GAJANAN MAHALE")
 
 c1,c2,c3,c4=st.columns(4)
 with c1:
@@ -132,7 +132,7 @@ if st.button("Run FULL SUITE Calculation", type="primary", use_container_width=T
     ct_res=get_ct_wheel(swl_t=swl, wtrolley_t=wtrolley_t, n_ctw=n_ctw, ct_rail_name=ct_rail_name, duty=duty)
     st.subheader(f"--- CT WHEEL Rail={ct_rail_name} ---")
     st.write(f"CT: Dmin={ct_res['dmin_mm']}mm -> Sel={ct_res['d_sel_mm']}mm Wt={ct_res['total_wt_kg']}Kg")
-    st.json(ct_res)
+    # st.json(ct_res)
 
     st.subheader("--- DG BOX GIRDER ---")
     box_sol=get_box_girder(SWL_T=swl, SPAN_M=span, duty=duty, IMPACT=impact, DF=duty_f)
@@ -141,7 +141,7 @@ if st.button("Run FULL SUITE Calculation", type="primary", use_container_width=T
         st.stop()
     Wg=box_sol['Wg']
     st.write(f"Box: H={box_sol['H']:.1f}cm Wg 1={Wg:.0f}Kg")
-    st.json(box_sol)
+    # st.json(box_sol)
 
     st.subheader("--- END CARRIAGE ---")
     P=(swl*1000 + wtrolley_t*1000)/2
@@ -150,13 +150,13 @@ if st.button("Run FULL SUITE Calculation", type="primary", use_container_width=T
         st.error("No end carriage solution")
         st.stop()
     st.write(f"EC: H={ec_sol['H']:.1f} Wec 1={ec_sol['Wec_one']:.0f}Kg 2={ec_sol['Wec_total']:.0f}Kg Wcrane est={ec_sol['WCRANE']:.0f}Kg")
-    st.json(ec_sol)
+    # st.json(ec_sol)
     Wcrane_est=ec_sol['WCRANE']
 
     st.subheader(f"--- LT WHEEL Rail={lt_rail_name} ---")
     lt_res=get_lt_wheel(swl_t=swl, wcrane_t=Wcrane_est/1000, n_ltw=n_ltw, lt_rail_name=lt_rail_name, duty=duty)
     st.write(f"LT: Dmin={lt_res['dmin_mm']} -> Sel={lt_res['d_sel_mm']}mm Wt={lt_res['total_wt_kg']}Kg")
-    st.json(lt_res)
+    # st.json(lt_res)
 
     platform_wt = 65*span + 250
     ct_rail_wt_per_m = get_rail_wt(ct_rail_name)
