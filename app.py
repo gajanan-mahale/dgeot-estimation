@@ -154,7 +154,7 @@ if st.button("Run FULL SUITE Calculation", type="primary", use_container_width=T
     Wcrane_est=ec_sol['WCRANE']
 
     st.subheader(f"--- LT WHEEL Rail={lt_rail_name} ---")
-    lt_res=get_lt_wheel(swl_t=swl, wcrane_t=Wcrane_est/1000, n_ltw=n_ltw, lt_rail_name=lt_rail_name, duty=duty)
+    lt_res = get_lt_wheel(swl_t=swl, wcrane_t=Wcrane_est/1000, n_ltw=n_ltw, lt_rail_name=lt_rail_name, duty=duty, span_m=span, wtrolley_t=wtrolley_t, TG_cm=TG_cm)
     st.write(f"LT: Dmin={lt_res['dmin_mm']} -> Selected={lt_res['d_sel_mm']}mm Wt={lt_res['total_wt_kg']}Kg")
     # st.json(lt_res)
 
