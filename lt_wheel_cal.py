@@ -1,5 +1,5 @@
-# lt_wheel_cal.py - LT Wheel Dia + Wt
-# Everything same as CT, only Wtrolley replaced by Wcrane
+# lt_wheel_cal.py - LT Wheel Dia + Wt + Accurate Pmax
+# Wcrane taken from full suite - No placeholder
 
 RAIL_TOP = {
     "50x50": 50, "60x40": 60, "60x60": 60,
@@ -40,15 +40,30 @@ def get_c2(duty):
 
 PL=7.8
 
-def get_lt_wheel_full(swl_t, wcrane_t, n_ltw, lt_rail_name, duty):
-    # Wcrane replaces Wtrolley
-    if wcrane_t is None or wcrane_t==0:
-        wcrane_t = 0.35*swl_t + 5 # placeholder, you will calculate afterwards
+def calc_pmax_accurate(swl_t, span_m, wtrolley_t, wcrane_t, TG_cm, n_ltw):
+    """Same Ha formula as app.py - Accurate Pmax"""
+    TG_M = TG_cm/100.0
+    Ha = max(1.0, TG_M*0.5)
+    WC_T = wcrane_t
+    # Pmax per wheel in Ton
+    Pmax_T = (swl_t+wtrolley_t)*(span_m+Ha)/((n_ltw/2)*span_m) + (WC_T-wtrolley_t)/n_ltw
+    return Pmax_T*1000, Ha # kg, Ha
 
-    pmax=((swl_t*1.03 + wcrane_t)/n_ltw)*1.3*1000
+def get_lt_wheel_full(swl_t, wcrane_t, n_ltw, lt_rail_name, duty, span_m=20.0, wtrolley_t=0.0, TG_cm=200.0):
+    """
+    Now Wcrane is MANDATORY from suite - No placeholder
+    span_m, wtrolley_t, TG_cm used only for accurate Pmax calc
+    """
+    if wcrane_t is None or wcrane_t==0:
+        raise ValueError("Wcrane_t must be passed from suite - no placeholder allowed")
+
+    # 1. Accurate Pmax from suite values
+    pmax_kg_accurate, Ha = calc_pmax_accurate(swl_t, span_m, wtrolley_t, wcrane_t, TG_cm, n_ltw)
+
+    # 2. Pmin for mean calc (old method still valid for Pmin)
     pmin_total=wcrane_t*0.33*1000
     pmin_w=pmin_total/n_ltw
-    pmean_kg=(2*pmax+pmin_w)/3
+    pmean_kg=(2*pmax_kg_accurate+pmin_w)/3
     pmean_n=pmean_kg*9.81
 
     lookup={k.upper().replace(" ",""):v for k,v in RAIL_TOP.items()}
@@ -67,10 +82,17 @@ def get_lt_wheel_full(swl_t, wcrane_t, n_ltw, lt_rail_name, duty):
     return {
         "swl_t":swl_t,"wcrane_t":round(wcrane_t,3),"n_ltw":n_ltw,
         "lt_rail":lt_rail_name,"rail_top":top,"a_mm":round(a,2),
-        "pmax_kg":round(pmax,1),"pmin_wheel_kg":round(pmin_w,1),
+        "span_m":span_m,"TG_cm":TG_cm,"Ha_m":round(Ha,3),
+        "pmax_kg":round(pmax_kg_accurate,1),
+        "pmax_T":round(pmax_kg_accurate/1000,3),
+        "pmin_wheel_kg":round(pmin_w,1),
         "pmean_kg":round(pmean_kg,1),"pmean_n":round(pmean_n,1),
         "rpm":rpm,"c1":round(c1,4),"c2":c2,
         "dmin_mm":round(dmin,1),"d_sel_mm":d_sel,
         "wt_per_set_kg":wt_per_set,"total_wt_kg":round(total_wt,1),
         "wt_per_wheel_kg":round(wt_per_set/4,1)
     }
+
+# Backward compatible wrapper - so old app.py still works
+def get_lt_wheel(swl_t, wcrane_t, n_ltw, lt_rail_name, duty):
+    return get_lt_wheel_full(swl_t, wcrane_t, n_ltw, lt_rail_name, duty, span_m=20.0, wtrolley_t=0.2*swl_t, TG_cm=200.0)
