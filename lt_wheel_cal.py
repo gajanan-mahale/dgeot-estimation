@@ -1,5 +1,4 @@
 # lt_wheel_cal.py - LT Wheel Dia + Wt + Accurate Pmax
-# Wcrane taken from full suite - No placeholder
 
 RAIL_TOP = {
     "50x50": 50, "60x40": 60, "60x60": 60,
@@ -41,26 +40,17 @@ def get_c2(duty):
 PL=7.8
 
 def calc_pmax_accurate(swl_t, span_m, wtrolley_t, wcrane_t, TG_cm, n_ltw):
-    """Same Ha formula as app.py - Accurate Pmax"""
     TG_M = TG_cm/100.0
     Ha = max(1.0, TG_M*0.5)
     WC_T = wcrane_t
-    # Pmax per wheel in Ton
     Pmax_T = (swl_t+wtrolley_t)*(span_m+Ha)/((n_ltw/2)*span_m) + (WC_T-wtrolley_t)/n_ltw
-    return Pmax_T*1000, Ha # kg, Ha
+    return Pmax_T*1000, Ha
 
 def get_lt_wheel_full(swl_t, wcrane_t, n_ltw, lt_rail_name, duty, span_m=20.0, wtrolley_t=0.0, TG_cm=200.0):
-    """
-    Now Wcrane is MANDATORY from suite - No placeholder
-    span_m, wtrolley_t, TG_cm used only for accurate Pmax calc
-    """
     if wcrane_t is None or wcrane_t==0:
-        raise ValueError("Wcrane_t must be passed from suite - no placeholder allowed")
+        raise ValueError("Wcrane_t must be passed from suite")
 
-    # 1. Accurate Pmax from suite values
     pmax_kg_accurate, Ha = calc_pmax_accurate(swl_t, span_m, wtrolley_t, wcrane_t, TG_cm, n_ltw)
-
-    # 2. Pmin for mean calc (old method still valid for Pmin)
     pmin_total=wcrane_t*0.33*1000
     pmin_w=pmin_total/n_ltw
     pmean_kg=(2*pmax_kg_accurate+pmin_w)/3
@@ -75,7 +65,6 @@ def get_lt_wheel_full(swl_t, wcrane_t, n_ltw, lt_rail_name, duty, span_m=20.0, w
     c2=get_c2(duty)
     dmin=pmean_n/(PL*a*c1*c2)
     d_sel=next((d for d in WHEEL_STD if d>=dmin), WHEEL_STD[-1])
-
     wt_per_set=WHEEL_WT_SET.get(d_sel,0)
     total_wt=wt_per_set*(n_ltw/4)
 
@@ -93,6 +82,9 @@ def get_lt_wheel_full(swl_t, wcrane_t, n_ltw, lt_rail_name, duty, span_m=20.0, w
         "wt_per_wheel_kg":round(wt_per_set/4,1)
     }
 
-# Backward compatible wrapper - so old app.py still works
-def get_lt_wheel(swl_t, wcrane_t, n_ltw, lt_rail_name, duty):
-    return get_lt_wheel_full(swl_t, wcrane_t, n_ltw, lt_rail_name, duty, span_m=20.0, wtrolley_t=0.2*swl_t, TG_cm=200.0)
+# Wrapper accepts new params also
+def get_lt_wheel(swl_t, wcrane_t, n_ltw, lt_rail_name, duty, span_m=20.0, wtrolley_t=0.0, TG_cm=200.0):
+    return get_lt_wheel_full(swl_t, wcrane_t, n_ltw, lt_rail_name, duty, span_m, wtrolley_t, TG_cm)
+
+def get_lt_wheel_full_old(swl_t, wcrane_t, n_ltw, lt_rail_name, duty):
+    return get_lt_wheel_full(swl_t, wcrane_t, n_ltw, lt_rail_name, duty)
