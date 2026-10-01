@@ -122,7 +122,7 @@ if st.button("Run FULL SUITE Calculation", type="primary", use_container_width=T
     drum_res=get_drum(swl,final_dia,lift,falls,reeving,duty)
     drum_len=drum_res['drum_length_mm']
     st.subheader("--- CT DRUM ---")
-    st.write(f"Drum {drum_res['drum_od']} dia X {drum_res['drum_thk_mm']} thk X {drum_len} length")
+    st.write(f"Drum {drum_res['drum_od']} dia X {drum_res['drum_thk_mm']} thk X {drum_len} mm length")
 
     calc_gauge=drum_len+1200
     calc_TG_cm=calc_gauge/10
@@ -131,7 +131,7 @@ if st.button("Run FULL SUITE Calculation", type="primary", use_container_width=T
     st.subheader(f"Trolley Gauge TG={TG_cm:.0f}cm")
     ct_res=get_ct_wheel(swl_t=swl, wtrolley_t=wtrolley_t, n_ctw=n_ctw, ct_rail_name=ct_rail_name, duty=duty)
     st.subheader(f"--- CT WHEEL Rail={ct_rail_name} ---")
-    st.write(f"CT: Dmin={ct_res['dmin_mm']}mm -> Sel={ct_res['d_sel_mm']}mm Wt={ct_res['total_wt_kg']}Kg")
+    st.write(f"CT: Dmin={ct_res['dmin_mm']}mm -> Selected={ct_res['d_sel_mm']}mm Wt={ct_res['total_wt_kg']}Kg")
     # st.json(ct_res)
 
     st.subheader("--- DG BOX GIRDER ---")
@@ -140,7 +140,7 @@ if st.button("Run FULL SUITE Calculation", type="primary", use_container_width=T
         st.error("No box girder solution")
         st.stop()
     Wg=box_sol['Wg']
-    st.write(f"Box: H={box_sol['H']:.1f}cm Wg 1={Wg:.0f}Kg")
+    st.write(f"Main Girder: H={box_sol['H']:.1f}cm Wt of one girder ={Wg:.0f}Kg")
     # st.json(box_sol)
 
     st.subheader("--- END CARRIAGE ---")
@@ -149,13 +149,13 @@ if st.button("Run FULL SUITE Calculation", type="primary", use_container_width=T
     if not ec_sol:
         st.error("No end carriage solution")
         st.stop()
-    st.write(f"EC: H={ec_sol['H']:.1f} Wec 1={ec_sol['Wec_one']:.0f}Kg 2={ec_sol['Wec_total']:.0f}Kg Wcrane est={ec_sol['WCRANE']:.0f}Kg")
+    st.write(f"End Carriage: H={ec_sol['H']:.1f}cm Wt of one End Carriage={ec_sol['Wec_one']:.0f}Kg Wt FOR 2 NOS={ec_sol['Wec_total']:.0f}Kg Wcrane est={ec_sol['WCRANE']:.0f}Kg")
     # st.json(ec_sol)
     Wcrane_est=ec_sol['WCRANE']
 
     st.subheader(f"--- LT WHEEL Rail={lt_rail_name} ---")
     lt_res=get_lt_wheel(swl_t=swl, wcrane_t=Wcrane_est/1000, n_ltw=n_ltw, lt_rail_name=lt_rail_name, duty=duty)
-    st.write(f"LT: Dmin={lt_res['dmin_mm']} -> Sel={lt_res['d_sel_mm']}mm Wt={lt_res['total_wt_kg']}Kg")
+    st.write(f"LT: Dmin={lt_res['dmin_mm']} -> Selected={lt_res['d_sel_mm']}mm Wt={lt_res['total_wt_kg']}Kg")
     # st.json(lt_res)
 
     platform_wt = 65*span + 250
@@ -176,18 +176,19 @@ if st.button("Run FULL SUITE Calculation", type="primary", use_container_width=T
     with colA:
         st.metric("Duty", duty)
         st.metric("IMPACT / DF", f"{impact} / {duty_f}")
-        st.metric("Box H", f"{box_sol['H']:.1f} cm")
-        st.metric("Wg 1 girder kg", f"{Wg:.0f}")
-        st.metric("EC H", f"{ec_sol['H']:.1f}")
+        st.metric("Box Height", f"{box_sol['H']:.1f} cm")
+        st.metric("Wt of 1 Girder kg", f"{Wg:.0f} cm")
+        st.metric("EC Height cm", f"{ec_sol['H']:.1f}cm")
     with colB:
         st.metric("LT Rail", lt_rail_name)
         st.metric("LT Wheel Dia", f"{lt_res['d_sel_mm']} mm")
         st.metric("CT Rail", ct_rail_name)
         st.metric("CT Wheel Dia", f"{ct_res['d_sel_mm']} mm")
         st.metric("CT Rail wt", f"{ct_rail_wt_total:.0f} kg")
-        st.metric("Platform wt", f"{platform_wt:.0f} kg")
+        
     with colC:
         st.metric("Wcrane FINAL kg", f"{Wcrane_final:.0f}")
         st.metric("Wcrane T", f"{Wcrane_final/1000:.2f}")
+        st.metric("Platform wt", f"{platform_wt:.0f} kg")
         st.metric("Ha m", f"{Ha:.3f}")
-        st.success(f"Pmax Static = {Pmax_kg:.0f} kg = {Pmax_kg/1000:.3f} T")
+        st.success(f"Pmax Max Static wheel load w/o imp = {Pmax_kg:.0f} kg = {Pmax_kg/1000:.3f} T")
