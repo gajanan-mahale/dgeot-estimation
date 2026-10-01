@@ -177,8 +177,8 @@ if st.button("Run FULL SUITE Calculation", type="primary", use_container_width=T
         st.metric("Duty", duty)
         st.metric("IMPACT / DF", f"{impact} / {duty_f}")
         st.metric("Box Height", f"{box_sol['H']:.1f} cm")
-        st.metric("Wt of 1 Girder kg", f"{Wg:.0f} cm")
-        st.metric("EC Height cm", f"{ec_sol['H']:.1f}cm")
+        st.metric("Wt of 1 Girder kg", f"{Wg:.0f} kg")
+        st.metric("EC Height cm", f"{ec_sol['H']:.1f} cm")
     with colB:
         st.metric("LT Rail", lt_rail_name)
         st.metric("LT Wheel Dia", f"{lt_res['d_sel_mm']} mm")
@@ -187,8 +187,8 @@ if st.button("Run FULL SUITE Calculation", type="primary", use_container_width=T
         st.metric("CT Rail wt", f"{ct_rail_wt_total:.0f} kg")
         
     with colC:
-        st.metric("Wcrane FINAL kg", f"{Wcrane_final:.0f}")
-        st.metric("Wcrane T", f"{Wcrane_final/1000:.2f}")
+        st.metric("Wt of crane", f"{Wcrane_final:.0f} kg")
+        st.metric("W of crane T", f"{Wcrane_final/1000:.2f} Ton")
         st.metric("Platform wt", f"{platform_wt:.0f} kg")
-        st.metric("Ha m", f"{Ha:.3f}")
+        st.metric("Ha m", f"{Ha:.3f} m")
         st.success(f"Pmax Max Static wheel load w/o imp = {Pmax_kg:.0f} kg = {Pmax_kg/1000:.3f} T")
