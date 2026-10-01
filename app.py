@@ -106,7 +106,7 @@ with c4:
     wt_def=round(0.2*swl,2)
     wtrolley_t=st.number_input(f"Enter W Trolley (T) [{wt_def}]", value=float(wt_def), step=0.1)
     n_ctw=st.number_input("Enter No of CT wheels [4]", value=4, min_value=2, max_value=16, step=2)
-    n_ltw=st.number_input("Enter No of LT wheels [8]", value=8, min_value=4, max_value=16, step=2)
+    n_ltw=st.number_input("Enter No of LT wheels [4]", value=4, min_value=4, max_value=16, step=2)
 
 impact,duty_f=get_factors(duty)
 st.write(f"Duty {duty} -> IMPACT={impact} DF={duty_f} | LT Rail={lt_rail_name} CT Rail={ct_rail_name}")
