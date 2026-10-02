@@ -151,9 +151,10 @@ with c2:
     core=st.selectbox("Enter core steel/fiber [fiber]", ["fiber","steel"], index=0)
     reeving=2
 with c3:
+    auto=get_rail_by_swl(swl)
     lt_rail_name=st.selectbox(f"Enter LT Rail [{auto['rail']}]", ["50x50","60x40","60x60","LBS60","LBS75","LBS90","LBS105","LBS120","CR80","CR100"])
     ct_rail_name=st.selectbox(f"Enter CT Rail [{lt_rail_name}]", ["50x50","60x40","60x60","LBS60","LBS75","LBS90","LBS105","LBS120","CR80","CR100"])
-    auto=get_rail_by_swl(swl)
+    # auto=get_rail_by_swl(swl)
     st.write(f"Auto rail for SWL {swl}T = {auto['rail']}")
 with c4:
     wt_def=round(0.2*swl,2)
