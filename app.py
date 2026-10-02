@@ -190,7 +190,7 @@ if st.button("Run FULL SUITE Calculation", type="primary", use_container_width=T
         st.error("No box girder solution")
         st.stop()
     Wg=box_sol['Wg']
-    st.write(f"Box Girder: H={box_sol['H']:.1f}cm Wg 1={Wg:.0f}Kg")
+    st.write(f"Box Girder: H={box_sol['H']:.1f}cm Wt of 1 girder={Wg:.0f}Kg")
     # st.json(box_sol)
     st.subheader("--- END CARRIAGE ---")
     P=(swl*1000 + wtrolley_t*1000)/2
