@@ -138,7 +138,7 @@ if st.sidebar.button("Logout", key="logout_unique", use_container_width=True):
     st.rerun()
 
 st.title("🏗️ DGEOT CRANE ESTIMATION SUITE")
-st.caption("Login cached only - No calculation cache")
+st.caption("BY : GAJANAN MAHALE")
 
 c1,c2,c3,c4=st.columns(4)
 with c1:
@@ -198,7 +198,7 @@ if st.button("Run FULL SUITE Calculation", type="primary", use_container_width=T
         st.error("No end carriage solution")
         st.stop()
     st.write(f"End Car: H={ec_sol['H']:.1f} cm Wec 1 NO={ec_sol['Wec_one']:.0f}Kg 2 NOS={ec_sol['Wec_total']:.0f}Kg Wt of crane est={ec_sol['WCRANE']:.0f}Kg")
-    st.json(ec_sol)
+    # st.json(ec_sol)
     Wcrane_est=ec_sol['WCRANE']
     st.subheader(f"--- LT WHEEL Rail={lt_rail_name} ---")
     lt_res = get_lt_wheel(swl_t=swl, wcrane_t=Wcrane_est/1000, n_ltw=n_ltw, lt_rail_name=lt_rail_name, duty=duty, span_m=span, wtrolley_t=wtrolley_t, TG_cm=TG_cm)
