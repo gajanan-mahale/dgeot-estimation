@@ -14,7 +14,7 @@ USERS = {
     "designer": "Crane@2025",
     "pratik": "Avpin@7878",
     "vinays": "Vinay@2026",
-    "vikasm": "Vikasm@2026"
+    "vikasm": "Vikas@2026"
 }
 
 # === 1-DAY ONE-TIME GUEST LOGIN ===
