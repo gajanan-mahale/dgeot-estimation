@@ -12,6 +12,7 @@ from end_carriage_dg import get_end_carriage
 USERS = {
     "admin": "Owner@ceo",
     "designer": "Crane@2025",
+    "pratik": "Avpin@7878",
     "vinays": "Vinay@2026",
     "vikasm": "Vikasm@2026"
 }
