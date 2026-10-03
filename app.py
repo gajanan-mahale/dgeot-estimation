@@ -133,7 +133,7 @@ if not st.session_state.logged_in:
     st.stop()
 
 # st.sidebar.success(f"Logged in: {st.session_state.user}")
-st.sidebar.success(f"Welcome {st.session_state.user} ! 👋")
+st.sidebar.success(f"Welcome {st.session_state.user} Sir! 👋")
 st.sidebar.title("DGEOT CRANE SUITE")
 if st.sidebar.button("Logout", key="logout_unique", use_container_width=True):
     st.session_state.logged_in=False
