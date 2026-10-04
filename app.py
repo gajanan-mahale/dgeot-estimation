@@ -148,7 +148,7 @@ with c4:
     wtrolley_t=st.number_input(f"Enter W Trolley (T) [{wt_def}]", value=float(wt_def), step=0.1)
     n_ctw=st.number_input("Enter No of CT wheels [4]", value=4, min_value=2, max_value=16, step=2)
     n_ltw=st.number_input("Enter No of LT wheels [4]", value=4, min_value=4, max_value=16, step=2)
-    n_ct_motors = st.selectbox("No. of CT Motors [2]", [1, 2], index=0)
+    n_ct_motors = st.selectbox("No. of CT Motors [2]", [1, 2], index=1)
 
 impact,duty_f,service_f,cdf_f=get_factors(duty)
 st.write(f"Duty {duty} -> IMPACT={impact} DF={duty_f} SERVICE={service_f} Cdf={cdf_f} | LT={lt_rail_name} CT={ct_rail_name} | V_LT={v_ltm} V_CT={v_ctm} N_CT_Mot={n_ct_motors} Tamb={Tamb}")
@@ -199,7 +199,6 @@ if st.button("Run FULL SUITE Calculation", type="primary", use_container_width=T
     LTM = calc_ltm(SWL_T=swl, v_mpm=v_ltm, duty=duty, Tamb=Tamb, WC_T=Wcrane_final/1000)
     CTM = calc_ctm(SWL_T=swl, v_ct_mpm=v_ctm, duty=duty, Tamb=Tamb, WTrolley_T=wtrolley_t, n_motors=n_ct_motors)
 
-    st.divider()
     st.subheader("--- LT MOTOR ---")
     st.write(f"S={LTM['S']} Cdf={LTM['Cdf']} Camb={LTM['Camb']} M_rated={LTM['M_rated_T']} T | V={v_ltm} mpm")
     st.success(f"LT Motor Power = {LTM['KW_Mech_kW']} kW per motor X 2 NOS @ {v_ltm} mpm")
@@ -211,7 +210,7 @@ if st.button("Run FULL SUITE Calculation", type="primary", use_container_width=T
     else:
         st.success(f"CT Motor Power = {CTM['KW_Mech_kW']} kW per motor X 2 NOS @ {v_ctm} mpm (Total {CTM['KW_Total_kW']} kW)")
 
-    st.divider()
+    # st.divider()
     st.subheader("========== FINAL SUMMARY ==========")
     colA,colB,colC=st.columns(3)
     with colA:
