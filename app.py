@@ -141,6 +141,7 @@ with c3:
     st.write(f"Auto rail for SWL {swl}T = {auto['rail']}")
     st.write("")#space for devlopment
     st.write("")#space for devlopment
+    st.write("")#space for devlopment    
     Tamb = st.selectbox("Tamb / Camb deg C [45]", list(range(40, 61, 5)), index=1)
 with c4:
     wt_def=round(0.2*swl,2)
