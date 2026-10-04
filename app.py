@@ -139,6 +139,7 @@ with c3:
     lt_rail_name=st.selectbox(f"Enter LT Rail [{auto['rail']}]", ["50x50","60x40","60x60","LBS60","LBS75","LBS90","LBS105","LBS120","CR80","CR100"])
     ct_rail_name=st.selectbox(f"Enter CT Rail [{lt_rail_name}]", ["50x50","60x40","60x60","LBS60","LBS75","LBS90","LBS105","LBS120","CR80","CR100"])
     st.write(f"Auto rail for SWL {swl}T = {auto['rail']}")
+    st.write("")
     Tamb = st.selectbox("Tamb / Camb deg C [45]", list(range(40, 61, 5)), index=1)
 with c4:
     wt_def=round(0.2*swl,2)
