@@ -126,13 +126,13 @@ c1,c2,c3,c4=st.columns(4)
 with c1:
     swl=st.number_input("Enter SWL (T) [10]", value=10.0, step=0.5)
     span=st.number_input("Enter Span (m) [20]", value=20.0, step=0.5)
-    lift=st.number_input("Enter Lift Height (m) [10]", value=10.0, step=0.5)
-    v_ltm = st.selectbox("LT Speed V mpm [15]", list(range(10, 26, 1)), index=5)
+    lift=st.number_input("Enter Lift Height (m) [6]", value=10.0, step=0.5)
+    v_ltm = st.selectbox("LT Speed V mpm [20]", list(range(10, 26, 1)), index=5)
 with c2:
     duty=st.selectbox("Enter Duty M1-M8 [M5]", ["M1","M2","M3","M4","M5","M6","M7","M8"], index=4)
     falls=st.number_input("Enter No. of Falls [4]", value=4.0, step=1.0)
     core=st.selectbox("Enter core steel/fiber [fiber]", ["fiber","steel"], index=0)
-    v_ctm = st.selectbox("CT Speed V mpm [10]", list(range(10, 21, 1)), index=0)
+    v_ctm = st.selectbox("CT Speed V mpm [20]", list(range(10, 21, 1)), index=0)
     reeving=2
 with c3:
     auto=get_rail_by_swl(swl)
@@ -148,7 +148,7 @@ with c4:
     wtrolley_t=st.number_input(f"Enter W Trolley (T) [{wt_def}]", value=float(wt_def), step=0.1)
     n_ctw=st.number_input("Enter No of CT wheels [4]", value=4, min_value=2, max_value=16, step=2)
     n_ltw=st.number_input("Enter No of LT wheels [4]", value=4, min_value=4, max_value=16, step=2)
-    n_ct_motors = st.selectbox("No. of CT Motors [1]", [1, 2], index=0)
+    n_ct_motors = st.selectbox("No. of CT Motors [2]", [1, 2], index=0)
 
 impact,duty_f,service_f,cdf_f=get_factors(duty)
 st.write(f"Duty {duty} -> IMPACT={impact} DF={duty_f} SERVICE={service_f} Cdf={cdf_f} | LT={lt_rail_name} CT={ct_rail_name} | V_LT={v_ltm} V_CT={v_ctm} N_CT_Mot={n_ct_motors} Tamb={Tamb}")
