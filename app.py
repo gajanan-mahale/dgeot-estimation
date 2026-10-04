@@ -140,12 +140,12 @@ with c3:
     ct_rail_name=st.selectbox(f"Enter CT Rail [{lt_rail_name}]", ["50x50","60x40","60x60","LBS60","LBS75","LBS90","LBS105","LBS120","CR80","CR100"])
     st.write(f"Auto rail for SWL {swl}T = {auto['rail']}")
     Tamb = st.selectbox("Tamb / Camb deg C [45]", list(range(40, 61, 5)), index=1)
-    n_ct_motors = st.selectbox("No. of CT Motors [1]", [1, 2], index=0)
 with c4:
     wt_def=round(0.2*swl,2)
     wtrolley_t=st.number_input(f"Enter W Trolley (T) [{wt_def}]", value=float(wt_def), step=0.1)
     n_ctw=st.number_input("Enter No of CT wheels [4]", value=4, min_value=2, max_value=16, step=2)
     n_ltw=st.number_input("Enter No of LT wheels [4]", value=4, min_value=4, max_value=16, step=2)
+    n_ct_motors = st.selectbox("No. of CT Motors [1]", [1, 2], index=0)
 
 impact,duty_f,service_f,cdf_f=get_factors(duty)
 st.write(f"Duty {duty} -> IMPACT={impact} DF={duty_f} SERVICE={service_f} Cdf={cdf_f} | LT={lt_rail_name} CT={ct_rail_name} | V_LT={v_ltm} V_CT={v_ctm} N_CT_Mot={n_ct_motors} Tamb={Tamb}")
