@@ -7,7 +7,7 @@ from ct_wheel_cal import get_wheel_full as get_ct_wheel
 from lt_wheel_cal import get_lt_wheel_full as get_lt_wheel
 from main_dg_box import get_box_girder
 from end_carriage_dg import get_end_carriage
-from LT_Motor_file import calc_ltm
+from LT_Motor_file import calc_ltm, calc_ctm
 
 USERS = {
     "admin": "Owner@ceo",
@@ -72,19 +72,6 @@ def get_factors(cls):
     cls = cls.strip().upper()
     return base.get(cls,1.32), duty.get(cls,1.06), service.get(cls,1), Cdf.get(cls,1.25)
 
-def get_camb(Tamb):
-    camb_map = {40:1.0, 45:0.95, 50:0.88, 55:0.83, 60:0.75}
-    return camb_map.get(Tamb, 0.95)
-
-def calc_ltm(SWL_T, v_mpm, duty, Tamb, WC_T, F=8, T=1.7, a=9, Eff=0.86):
-    IMPACT, S, SERVICE, Cdf = get_factors(duty)
-    Camb = get_camb(Tamb)
-    M_rated = 1.03 * SWL_T + WC_T
-    term1 = (M_rated * v_mpm * S * Cdf) / (6117 * T * Camb)
-    term2 = F + (1100 * a / (981 * Eff))
-    KW_Mech = 0.66 * term1 * term2
-    return {"S":S, "Cdf":Cdf, "Camb":Camb, "IMPACT":IMPACT, "SERVICE":SERVICE, "M_rated_T":round(M_rated,3), "KW_Mech_kW":round(KW_Mech,3)}
-
 def calc_pmax(swl, span, wtrolley_t, Wcrane_final, TG_cm, n_ltw):
     TG_M = TG_cm/100.0
     Ha = max(1.0, TG_M*0.5)
@@ -145,13 +132,15 @@ with c2:
     duty=st.selectbox("Enter Duty M1-M8 [M5]", ["M1","M2","M3","M4","M5","M6","M7","M8"], index=4)
     falls=st.number_input("Enter No. of Falls [4]", value=4.0, step=1.0)
     core=st.selectbox("Enter core steel/fiber [fiber]", ["fiber","steel"], index=0)
-    Tamb = st.selectbox("Tamb / Camb deg C [45]", list(range(40, 61, 5)), index=1)
+    v_ctm = st.selectbox("CT Speed V mpm [10]", list(range(10, 21, 1)), index=0)
     reeving=2
 with c3:
     auto=get_rail_by_swl(swl)
     lt_rail_name=st.selectbox(f"Enter LT Rail [{auto['rail']}]", ["50x50","60x40","60x60","LBS60","LBS75","LBS90","LBS105","LBS120","CR80","CR100"])
     ct_rail_name=st.selectbox(f"Enter CT Rail [{lt_rail_name}]", ["50x50","60x40","60x60","LBS60","LBS75","LBS90","LBS105","LBS120","CR80","CR100"])
     st.write(f"Auto rail for SWL {swl}T = {auto['rail']}")
+    Tamb = st.selectbox("Tamb / Camb deg C [45]", list(range(40, 61, 5)), index=1)
+    n_ct_motors = st.selectbox("No. of CT Motors [1]", [1, 2], index=0)
 with c4:
     wt_def=round(0.2*swl,2)
     wtrolley_t=st.number_input(f"Enter W Trolley (T) [{wt_def}]", value=float(wt_def), step=0.1)
@@ -159,7 +148,7 @@ with c4:
     n_ltw=st.number_input("Enter No of LT wheels [4]", value=4, min_value=4, max_value=16, step=2)
 
 impact,duty_f,service_f,cdf_f=get_factors(duty)
-st.write(f"Duty {duty} -> IMPACT={impact} DF={duty_f} SERVICE={service_f} Cdf={cdf_f} | LT Rail={lt_rail_name} CT Rail={ct_rail_name}")
+st.write(f"Duty {duty} -> IMPACT={impact} DF={duty_f} SERVICE={service_f} Cdf={cdf_f} | LT={lt_rail_name} CT={ct_rail_name} | V_LT={v_ltm} V_CT={v_ctm} N_CT_Mot={n_ct_motors} Tamb={Tamb}")
 
 if st.button("Run FULL SUITE Calculation", type="primary", use_container_width=True):
     rope_res=select_rope(swl,falls,duty,core)
@@ -172,9 +161,7 @@ if st.button("Run FULL SUITE Calculation", type="primary", use_container_width=T
     drum_len=drum_res['drum_length_mm']
     st.subheader("--- CT DRUM ---")
     st.write(f"Drum {drum_res['drum_od']} dia X {drum_res['drum_thk_mm']} thk X {drum_len} length")
-    calc_gauge=drum_len+1200
-    calc_TG_cm=calc_gauge/10
-    TG_cm=calc_TG_cm
+    TG_cm=(drum_len+1200)/10
     st.subheader(f"Trolley Gauge TG={TG_cm:.0f}cm")
     ct_res=get_ct_wheel(swl_t=swl, wtrolley_t=wtrolley_t, n_ctw=n_ctw, ct_rail_name=ct_rail_name, duty=duty)
     st.subheader(f"--- CT WHEEL Rail={ct_rail_name} ---")
@@ -198,18 +185,29 @@ if st.button("Run FULL SUITE Calculation", type="primary", use_container_width=T
     lt_res = get_lt_wheel(swl_t=swl, wcrane_t=Wcrane_est/1000, n_ltw=n_ltw, lt_rail_name=lt_rail_name, duty=duty, span_m=span, wtrolley_t=wtrolley_t, TG_cm=TG_cm)
     st.write(f"LT: Dmin={lt_res['dmin_mm']} -> Selected={lt_res['d_sel_mm']}mm Wt={lt_res['total_wt_kg']}Kg")
     platform_wt = 65*span + 250
-    ct_rail_wt_per_m = get_rail_wt(ct_rail_name)
-    ct_rail_wt_total = ct_rail_wt_per_m * span * 2
+    ct_rail_wt_total = get_rail_wt(ct_rail_name) * span * 2
     Wcrane_final = 2*Wg + ec_sol['Wec_total'] + wtrolley_t*1000 + lt_res['total_wt_kg'] + ct_res['total_wt_kg'] + 100 + platform_wt + ct_rail_wt_total
     lt_res_final=get_lt_wheel(swl_t=swl, wcrane_t=Wcrane_final/1000, n_ltw=n_ltw, lt_rail_name=lt_rail_name, duty=duty)
     if lt_res_final['d_sel_mm']!=lt_res['d_sel_mm']:
         lt_res=lt_res_final
         Wcrane_final = 2*Wg + ec_sol['Wec_total'] + wtrolley_t*1000 + ct_res['total_wt_kg'] + lt_res['total_wt_kg'] + 100 + platform_wt + ct_rail_wt_total
     Pmax_kg, Ha = calc_pmax(swl, span, wtrolley_t, Wcrane_final, TG_cm, n_ltw)
+
     LTM = calc_ltm(SWL_T=swl, v_mpm=v_ltm, duty=duty, Tamb=Tamb, WC_T=Wcrane_final/1000)
+    CTM = calc_ctm(SWL_T=swl, v_ct_mpm=v_ctm, duty=duty, Tamb=Tamb, WTrolley_T=wtrolley_t, n_motors=n_ct_motors)
+
+    st.divider()
     st.subheader("--- LT MOTOR ---")
-    st.write(f"S={LTM['S']} Cdf={LTM['Cdf']} Camb={LTM['Camb']} M_rated={LTM['M_rated_T']} T | V={v_ltm} mpm Tamb={Tamb}C")
-    st.success(f"LT Motor Power = {LTM['KW_Mech_kW']} kW X 2 NOS")
+    st.write(f"S={LTM['S']} Cdf={LTM['Cdf']} Camb={LTM['Camb']} M_rated={LTM['M_rated_T']} T | V={v_ltm} mpm")
+    st.success(f"LT Motor Power = {LTM['KW_Mech_kW']} kW per motor X 2 NOS @ {v_ltm} mpm")
+
+    st.subheader("--- CT MOTOR ---")
+    st.write(f"S={CTM['S']} Cdf={CTM['Cdf']} Camb={CTM['Camb']} M_rated={CTM['M_rated_T']} T | V={v_ctm} mpm N={n_ct_motors}")
+    if n_ct_motors == 1:
+        st.success(f"CT Motor Power = {CTM['KW_Mech_kW']} kW X 1 NO @ {v_ctm} mpm")
+    else:
+        st.success(f"CT Motor Power = {CTM['KW_Mech_kW']} kW per motor X 2 NOS @ {v_ctm} mpm (Total {CTM['KW_Total_kW']} kW)")
+
     st.divider()
     st.subheader("========== FINAL SUMMARY ==========")
     colA,colB,colC=st.columns(3)
@@ -232,3 +230,4 @@ if st.button("Run FULL SUITE Calculation", type="primary", use_container_width=T
         st.metric("Platform wt", f"{platform_wt:.0f} kg")
         st.success(f"Pmax = {Pmax_kg:.0f} kg = {Pmax_kg/1000:.3f} Ton")
 
+    st.info(f"LT: {LTM['KW_Mech_kW']} kW x 2 | CT: {CTM['KW_Mech_kW']} kW x {n_ct_motors} @ Tamb {Tamb}C")
