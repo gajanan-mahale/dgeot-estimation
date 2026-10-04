@@ -1,84 +1,33 @@
-# KW_Mech AS PER IS:3177(2020)
+# LT_Motor_file.py - FINAL WITH LT + CT MOTOR
+def get_factors(cls):
+    base={"M1":1.06,"M2":1.12,"M3":1.18,"M4":1.25,"M5":1.32,"M6":1.4,"M7":1.5,"M8":1.5}
+    duty={"M1":1.0,"M2":1.0,"M3":1.0,"M4":1.05,"M5":1.06,"M6":1.1,"M7":1.12,"M8":1.2}
+    service={"M1":1.0,"M2":1.0,"M3":1.0,"M4":1.1,"M5":1.01,"M6":1.1,"M7":1.2,"M8":1.2}
+    Cdf = {"M1":1.0,"M2":1.06,"M3":1.12,"M4":1.18,"M5":1.25,"M6":1.32,"M7":1.4,"M8":1.5}
+    cls = cls.strip().upper()
+    return base.get(cls,1.32), duty.get(cls,1.06), service.get(cls,1), Cdf.get(cls,1.25)
 
-def get_factors(duty, Tamb):
-    duty = duty.upper().strip()
-    
-    # S factor
-    if duty == "M6":
-        S = 1.1
-    elif duty == "M7":
-        S = 1.1
-    elif duty == "M8":
-        S = 1.2
-    else: # M3, M4, M5
-        S = 1.0
-
-    # Cdf factor
-    cdf_map = {
-        "M5": 1.25,
-        "M6": 1.32,
-        "M7": 1.4,
-        "M8": 1.5
-    }
-    Cdf = cdf_map.get(duty, 1.25) # 1.18 for M4, 1.12 for M3 as per standard
-
-    # Camb factor - Ambient temp correction
-    camb_map = {
-        40: 1.0,
-        45: 0.95,
-        50: 0.88,
-        55: 0.83,
-        60: 0.75
-    }
-    Camb = camb_map.get(Tamb, 0.95)
-    if Tamb not in camb_map:
-        print(f"Warning: Tamb {Tamb} not standard, using Camb=1.0")
-        
-    return S, Cdf, Camb
+def get_camb(Tamb):
+    return {40:1.0,45:0.95,50:0.88,55:0.83,60:0.75}.get(Tamb,0.95)
 
 def calc_ltm(SWL_T, v_mpm, duty, Tamb, WC_T, F=8, T=1.7, a=9, Eff=0.86):
-    """
-    SWL_T : tonn
-    v_mpm : velocity in m/min
-    WC_T : Weight of crane in tonn final
-    """
-    S, Cdf, Camb = get_factors(duty, Tamb)
-    
-    # Rated mass
-    M_rated = 1.03 * SWL_T + WC_T
-    M = M_rated # in Tonne for formula
-    V = v_mpm
-    
-   # Formula: KW_Mech = (M*V*S*Cdf / 6.117 * T * Camb) * (F + (1100*a / 981*Eff))
-    
-    term1 = (M * V * S * Cdf) / (6117 * T * Camb)
+    IMPACT,S,SERVICE,Cdf = get_factors(duty)
+    Camb = get_camb(Tamb)
+    M_rated = 1.03*SWL_T + WC_T
+    term1 = (M_rated * v_mpm * S * Cdf) / (6117 * T * Camb)
     term2 = F + (1100 * a / (981 * Eff))
-    
-    KW_Mech = 0.66 * term1 * term2   # No. of LT motors are always 2
-    
-    return {
-        "S": S,
-        "Cdf": Cdf,
-        "Camb": Camb,
-        "M_rated_T": round(M_rated, 3),
-        "KW_Mech_kW": round(KW_Mech, 3),
-    }
+    KW_Mech = 0.66 * term1 * term2
+    return {"S":S,"Cdf":Cdf,"Camb":Camb,"IMPACT":IMPACT,"SERVICE":SERVICE,"M_rated_T":round(M_rated,3),"KW_Mech_kW":round(KW_Mech,3)}
 
-# ========= HOW TO USE IN dgsuit.py =========
-if __name__ == "__main__":
-    # Example inputs from dgsuit.py
-    SWL_T = 20
-    v = 15 # mpm
-    duty = "M5"
-    Tamb = 45
-    w_crane = 16.86 # tonn
-
-    result = calc_ltm(SWL_T, v, duty, Tamb, w_crane)
-    print("LT motor power = ",result['KW_Mech_kW'], "kw")
-
-
-
-
-
-
-
+def calc_ctm(SWL_T, v_ct_mpm, duty, Tamb, WTrolley_T, n_motors=1, F=8, T=1.7, a=9, Eff=0.86):
+    IMPACT,S,SERVICE,Cdf = get_factors(duty)
+    Camb = get_camb(Tamb)
+    M_rated = SWL_T + WTrolley_T
+    term1 = (M_rated * v_ct_mpm * S * Cdf) / (6117 * T * Camb)
+    term2 = F + (1100 * a / (981 * Eff))
+    KW_Total = term1 * term2
+    if n_motors == 2:
+        KW_per_motor = 0.66 * KW_Total
+    else:
+        KW_per_motor = KW_Total
+    return {"S":S,"Cdf":Cdf,"Camb":Camb,"IMPACT":IMPACT,"SERVICE":SERVICE,"M_rated_T":round(M_rated,3),"KW_Total_kW":round(KW_Total,3),"KW_Mech_kW":round(KW_per_motor,3),"n_motors":n_motors}
