@@ -207,7 +207,9 @@ if st.button("Run FULL SUITE Calculation", type="primary", use_container_width=T
         Wcrane_final = 2*Wg + ec_sol['Wec_total'] + wtrolley_t*1000 + ct_res['total_wt_kg'] + lt_res['total_wt_kg'] + 100 + platform_wt + ct_rail_wt_total
     Pmax_kg, Ha = calc_pmax(swl, span, wtrolley_t, Wcrane_final, TG_cm, n_ltw)
     LTM = calc_ltm(SWL_T=swl, v_mpm=v_ltm, duty=duty, Tamb=Tamb, WC_T=Wcrane_final/1000)
-
+    st.subheader("--- LT MOTOR ---")
+    st.write(f"S={LTM['S']} Cdf={LTM['Cdf']} Camb={LTM['Camb']} M_rated={LTM['M_rated_T']} T | V={v_ltm} mpm Tamb={Tamb}C")
+    st.success(f"LT Motor Power = {LTM['KW_Mech_kW']} kW ")
     st.divider()
     st.subheader("========== FINAL SUMMARY ==========")
     colA,colB,colC=st.columns(3)
@@ -230,7 +232,3 @@ if st.button("Run FULL SUITE Calculation", type="primary", use_container_width=T
         st.metric("Platform wt", f"{platform_wt:.0f} kg")
         st.success(f"Pmax = {Pmax_kg:.0f} kg = {Pmax_kg/1000:.3f} Ton")
 
-    st.divider()
-    st.subheader("--- LT MOTOR ---")
-    st.write(f"S={LTM['S']} Cdf={LTM['Cdf']} Camb={LTM['Camb']} M_rated={LTM['M_rated_T']} T | V={v_ltm} mpm Tamb={Tamb}C")
-    st.success(f"LT Motor Power = {LTM['KW_Mech_kW']} kW ")
