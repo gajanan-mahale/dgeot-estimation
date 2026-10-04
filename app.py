@@ -209,7 +209,7 @@ if st.button("Run FULL SUITE Calculation", type="primary", use_container_width=T
     LTM = calc_ltm(SWL_T=swl, v_mpm=v_ltm, duty=duty, Tamb=Tamb, WC_T=Wcrane_final/1000)
     st.subheader("--- LT MOTOR ---")
     st.write(f"S={LTM['S']} Cdf={LTM['Cdf']} Camb={LTM['Camb']} M_rated={LTM['M_rated_T']} T | V={v_ltm} mpm Tamb={Tamb}C")
-    st.success(f"LT Motor Power = {LTM['KW_Mech_kW']} kW ")
+    st.success(f"LT Motor Power = {LTM['KW_Mech_kW']} kW X 2 NOS")
     st.divider()
     st.subheader("========== FINAL SUMMARY ==========")
     colA,colB,colC=st.columns(3)
